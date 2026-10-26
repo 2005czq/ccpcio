@@ -66,32 +66,20 @@ export function handleJumpAction(): void {
     return;
   }
 
-  // 输入 00:00:00 显示终榜
-  if (trimmed === '00:00:00' || (currentTimeMode === 'countdown' && seconds === 0)) {
-    setTimeline(0, true);
-    input.value = '';
-    updateFilterButtonUI();
-    return;
-  }
-
   const meta = getContestMetadata();
-  let elapsed = 0;
+  // Normalize countdown input to elapsed time before applying timeline limits.
+  const elapsed = currentTimeMode === 'countdown'
+    ? meta.totalDuration - seconds
+    : seconds;
 
-  if (currentTimeMode === 'countdown') {
-    if (seconds <= meta.freezeDuration) {
-      elapsed = meta.freezeStart;
-    } else {
-      elapsed = Math.max(0, meta.totalDuration - seconds);
-    }
+  if (elapsed >= meta.totalDuration) {
+    setTimeline(0, true);
+  } else if (elapsed >= meta.freezeStart) {
+    setTimeline(meta.freezeStart, false);
   } else {
-    if (seconds >= meta.freezeStart) {
-      elapsed = meta.freezeStart;
-    } else {
-      elapsed = seconds;
-    }
+    setTimeline(elapsed, false);
   }
 
-  setTimeline(elapsed, false);
   updateFilterButtonUI();
 }
 
