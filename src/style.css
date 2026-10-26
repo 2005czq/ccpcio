@@ -1,0 +1,60 @@
+#ccpcio-mode-btn,
+#ccpcio-jump-btn,
+#ccpcio-filter-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 28px;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  position: relative;
+  z-index: 41;
+  transition: opacity 0.2s;
+  vertical-align: middle;
+}
+
+#ccpcio-mode-btn:hover,
+#ccpcio-jump-btn:hover,
+#ccpcio-filter-btn:hover {
+  opacity: 1;
+}
+
+#ccpcio-time-input {
+  box-sizing: border-box;
+  width: 80px;
+  height: 28px;
+  margin: auto;
+  padding: 0 4px;
+  border: 1px solid currentColor;
+  border-radius: 0 !important;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  position: relative;
+  z-index: 41;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  line-height: 26px;
+}
+
+#ccpcio-time-input::placeholder {
+  color: currentColor;
+  opacity: 0.55;
+}
+
+#ccpcio-mode-btn svg,
+#ccpcio-jump-btn svg,
+#ccpcio-filter-btn svg {
+  display: block;
+  width: 1.2em;
+  height: 1.2em;
+  pointer-events: none;
+}
