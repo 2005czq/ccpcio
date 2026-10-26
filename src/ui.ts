@@ -97,7 +97,16 @@ export function handleJumpAction(): void {
 
 export function initNavbarUI(): void {
   const right = document.querySelector('.nav .right') as HTMLElement | null;
-  if (!right || document.getElementById('ccpcio-mode-btn')) return;
+  const nav = right?.closest('.nav') as HTMLElement | null;
+  if (!right || !nav || document.getElementById('ccpcio-controls')) return;
+
+  nav.classList.add('ccpcio-nav');
+  nav.closest('.header')?.classList.add('ccpcio-header');
+  nav.closest('#app')?.classList.add('ccpcio-app');
+
+  const controls = document.createElement('div');
+  controls.id = 'ccpcio-controls';
+  controls.setAttribute('aria-label', 'CCPCIO 工具');
 
   // 1. 正/倒计时开关 SVG (- / +) 放在输入框左侧
   const modeBtn = createIconButton('ccpcio-mode-btn', () => {
@@ -123,11 +132,11 @@ export function initNavbarUI(): void {
     updateFilterButtonUI();
   });
 
-  // 直接插入导航栏网格，让官网的 1.2rem 间距和垂直居中规则作用于每个控件。
-  const anchor = right.firstChild;
+  // 将自定义控件作为导航栏第二行，避免与官网工具混在同一行。
   [modeBtn, input, jumpBtn, filterBtn].forEach((control) => {
-    right.insertBefore(control, anchor);
+    controls.appendChild(control);
   });
+  nav.appendChild(controls);
 
   updateModeButtonUI();
   updateFilterButtonUI();
