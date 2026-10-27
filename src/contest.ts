@@ -87,6 +87,15 @@ export function setTimeline(elapsedSeconds: number, isFinalBoard = false): boole
   const app = getVueApp();
   const router = app?._context?.config?.globalProperties?.$router;
   const route = app?._context?.config?.globalProperties?.$route;
+  const replaceRoute = (query: any): void => {
+    if (!router || !route) return;
+
+    // The native progress drag handler writes its own ratio asynchronously.
+    // Apply our exact target after that write so it cannot overwrite the jump.
+    window.setTimeout(() => {
+      router.replace({ path: route.path, query });
+    }, 0);
+  };
 
   if (isFinalBoard) {
     cursor.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: cursor.offsetLeft }));
@@ -96,11 +105,9 @@ export function setTimeline(elapsedSeconds: number, isFinalBoard = false): boole
     if (progressComp?.props?.rankOptions) {
       progressComp.props.rankOptions.disableFilterSubmissionByTimestamp();
     }
-    if (router && route) {
-      const query = { ...route.query };
-      delete query['progress-ratio'];
-      router.replace({ path: route.path, query });
-    }
+    const query = { ...route?.query };
+    delete query['progress-ratio'];
+    replaceRoute(query);
     return true;
   }
 
@@ -120,10 +127,8 @@ export function setTimeline(elapsedSeconds: number, isFinalBoard = false): boole
   if (progressComp?.props?.rankOptions && progressComp?.props?.rank?.contest) {
     progressComp.props.rankOptions.setWidth(targetI, progressComp.props.rank.contest);
   }
-  if (router && route) {
-    const query = { ...route.query, 'progress-ratio': targetI };
-    router.replace({ path: route.path, query });
-  }
+  const query = { ...route?.query, 'progress-ratio': targetI };
+  replaceRoute(query);
   return true;
 }
 
