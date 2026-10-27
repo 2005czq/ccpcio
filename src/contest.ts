@@ -138,19 +138,29 @@ export function setTimeline(elapsedSeconds: number, isFinalBoard = false): boole
   return true;
 }
 
+// 每个榜单页面只自动切换一次，之后尊重用户手动选择的队伍分组。
+let officialGroupAppliedPath: string | null = null;
+
 // 自动切换到正式队伍
 export function ensureOfficialGroup(): void {
   const app = getVueApp();
   const route = app?._context?.config?.globalProperties?.$route;
   const router = app?._context?.config?.globalProperties?.$router;
+  if (!route || !router) return;
 
-  if (route && route.query.group !== 'official' && router) {
-    router.replace({ path: route.path, query: { ...route.query, group: 'official' } });
-  }
+  // 同一榜单只处理一次，后续手动切换分组不再干预。
+  if (officialGroupAppliedPath === route.path) return;
 
   const menuItems = Array.from(document.querySelectorAll('.second-level-menu-item')) as HTMLElement[];
   const officialBtn = menuItems.find(item => item.innerText.includes('正式队伍'));
-  if (officialBtn && !officialBtn.classList.contains('second-level-menu-item-current')) {
+  // 菜单尚未渲染，等待下一次 DOM 更新。
+  if (!officialBtn) return;
+
+  officialGroupAppliedPath = route.path;
+
+  if (!officialBtn.classList.contains('second-level-menu-item-current')) {
     officialBtn.click();
+  } else if (route.query.group !== 'official') {
+    router.replace({ path: route.path, query: { ...route.query, group: 'official' } });
   }
 }
