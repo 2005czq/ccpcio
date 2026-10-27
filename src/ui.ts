@@ -4,7 +4,8 @@ import {
   parseTimeToSeconds,
   getContestMetadata,
   setTimeline,
-  isAtOrAfterFreeze
+  isAtOrAfterFreeze,
+  isCompetitionPage
 } from './contest';
 import {
   isFilterEnabled,
@@ -84,6 +85,17 @@ export function handleJumpAction(): void {
 }
 
 export function initNavbarUI(): void {
+  if (!isCompetitionPage()) {
+    const controls = document.getElementById('ccpcio-controls');
+    controls?.remove();
+
+    const nav = document.querySelector('.nav');
+    nav?.classList.remove('ccpcio-nav');
+    nav?.closest('.header')?.classList.remove('ccpcio-header');
+    nav?.closest('#app')?.classList.remove('ccpcio-app');
+    return;
+  }
+
   const right = document.querySelector('.nav .right') as HTMLElement | null;
   const nav = right?.closest('.nav') as HTMLElement | null;
   if (!right || !nav || document.getElementById('ccpcio-controls')) return;

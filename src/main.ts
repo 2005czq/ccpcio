@@ -1,16 +1,10 @@
 import './style.css';
-import { ensureOfficialGroup } from './contest';
+import { ensureOfficialGroup, isCompetitionPage } from './contest';
 import { updateFilter } from './filter';
 import { initNavbarUI, syncUIState } from './ui';
 
 function main(): void {
-  // 默认切换正式队伍并同步控件和题目过滤。
-  ensureOfficialGroup();
-
-  initNavbarUI();
-
-  updateFilter();
-  syncUIState();
+  syncPageUI();
 
   // 监听榜单与时间轴变动，每帧合并更新。
   let rafId: number | null = null;
@@ -18,10 +12,7 @@ function main(): void {
     if (rafId !== null) return;
     rafId = requestAnimationFrame(() => {
       rafId = null;
-      ensureOfficialGroup();
-      initNavbarUI();
-      updateFilter();
-      syncUIState();
+      syncPageUI();
     });
   });
 
@@ -30,6 +21,15 @@ function main(): void {
     subtree: true,
     attributes: false
   });
+}
+
+function syncPageUI(): void {
+  initNavbarUI();
+  if (!isCompetitionPage()) return;
+
+  ensureOfficialGroup();
+  updateFilter();
+  syncUIState();
 }
 
 // 启动入口

@@ -2,6 +2,12 @@ export function getVueApp(): any {
   return (document.querySelector('#app') as any)?.__vue_app__;
 }
 
+export function isCompetitionPage(): boolean {
+  const app = getVueApp();
+  const route = app?._context?.config?.globalProperties?.$route;
+  return route?.matched?.some((record: any) => record.meta?.layout === 'board-layout') ?? false;
+}
+
 export function getProgressComp(): any {
   const root = document.querySelector('#app') as any;
   if (!root || !root._vnode) return null;
